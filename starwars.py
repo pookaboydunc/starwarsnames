@@ -1,6 +1,9 @@
 import random
 import StarTSPImage
+import textwrap
 from PIL import Image, ImageDraw, ImageFont
+from getkey import getkey, keys
+
 
 col1 = [
     'Keer',
@@ -371,7 +374,6 @@ col5 = [
 'Rebellions are built on hope.',
 'I am one with the Force and the Force is with me.',
 'You can\'t stop the change, any more than you can stop the suns from setting.',
-'The Force is not a power you have. It\'s not about lifting rocks. It\'s the energy between all things, a tension, a balance, that binds the universe together.',
 'We\'ll always be with you. No one\'s ever really gone.',
 'I bypassed the compressor!',
 'Impressive. Every word in that sentence was wrong.',
@@ -412,7 +414,6 @@ col5 = [
 'May the Force be with you.',
 'Do. Or do not. There is no try.',
 'No. I am your father.',
-'Luke, you can destroy the Emperor. He has foreseen this. It is your destiny. Join me, and together we can rule the galaxy as father and son.',
 'I\'m one with the Force. The Force is with me.',
 'Chewie, we\'re home.',
 'These aren\'t the droids you\'re looking for.',
@@ -438,7 +439,6 @@ col5 = [
 'Rebellions are built on hope.',
 'I am one with the Force and the Force is with me.',
 'You can\'t stop the change, any more than you can stop the suns from setting.',
-'The Force is not a power you have. It\'s not about lifting rocks. It\'s the energy between all things, a tension, a balance, that binds the universe together.',
 'We\'ll always be with you. No one\'s ever really gone.',
 'I bypassed the compressor!',
 'Impressive. Every word in that sentence was wrong.',
@@ -449,18 +449,10 @@ col5 = [
 'Droids are not meant to be servants. They are equals. They have hopes and dreams of their own.'
 ]
 
-p1 = col1[random.randint(0,len(col1)-1)]
-p2 = col2[random.randint(0,len(col2)-1)]
-p3 = col3[random.randint(0,len(col3)-1)]
-p4 = col4[random.randint(0,len(col4)-1)]
-p5 = col5[random.randint(0,len(col5)-1)]
-name = p1 + " " + p2
-l1 = p3 + " " + p4
-l2 = p5
 
-message = f"Greetings {p1} {p2}!\n{l1} I see you are.\n{l2}"
+output_path = 'output.bmp'
 
-def text_to_bitmap(text, output_path, font_size=25, image_size=(500, 200), bg_color="white", text_color="black"):
+def text_to_bitmap(text, output_path, font_size=23, image_size=(500, 200), bg_color="white", text_color="black"):
     # Create a new image with white background
     img = Image.new('RGB', image_size, color=bg_color)
     
@@ -469,7 +461,7 @@ def text_to_bitmap(text, output_path, font_size=25, image_size=(500, 200), bg_co
     
     # Load a font
     try:
-        font = ImageFont.truetype(r"/usr/share/fonts/truetype/roboto-slab/RobotoSlab-Thin.ttf", font_size)
+        font = ImageFont.truetype(r"/usr/share/fonts/truetype/freefont/FreeSans.ttf", font_size)
     except OSError:
         font = ImageFont.load_default()
     
@@ -487,11 +479,29 @@ def text_to_bitmap(text, output_path, font_size=25, image_size=(500, 200), bg_co
     # Save the image
     img.save(output_path)
 
-text_to_bitmap(message, "output.bmp")
+def run():
+    p1 = col1[random.randint(0,len(col1)-1)]
+    p2 = col2[random.randint(0,len(col2)-1)]
+    p3 = col3[random.randint(0,len(col3)-1)]
+    p4 = col4[random.randint(0,len(col4)-1)]
+    p5 = col5[random.randint(0,len(col5)-1)]
+    l1 = p3 + " " + p4
+    l2 = p5
 
-output_path = 'output.bmp'
+    message = f"Greetings {p1} {p2}!\n{textwrap.fill(l1, width=30)} I see you are.\n{textwrap.fill(l2, width=30)}"
+    text_to_bitmap(message, "output.bmp")
 
-raster = StarTSPImage.imageFileToRaster("output.bmp", cut=True)
 
-printer = open('/dev/usb/lp3', 'wb')
-printer.write(raster)
+    raster = StarTSPImage.imageFileToRaster("output.bmp", cut=True)
+
+    printer = open('/dev/usb/lp3', 'wb')
+    printer.write(raster)
+
+print("Press any key (or 'q' to quit)...")
+
+while True:
+    key = getkey()
+    if key == 'q':
+        print("\nExiting the program.")
+        break
+    run()
